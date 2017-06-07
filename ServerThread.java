@@ -48,9 +48,11 @@ public class ServerThread extends Thread {
                     handleLogoff();
                     break;
                 } else if ("login".equalsIgnoreCase(cmd)) {
-        
                     handleLogin(outputStream, tokens);
-                } else if ("msg".equalsIgnoreCase(cmd)) {
+                } else if("register".equalsIgnoreCase(cmd)){
+                	handleRegister(outputStream,tokens);
+                }else if ("msg".equalsIgnoreCase(cmd)) {
+                
                     String[] tokensMsg = StringUtils.split(line, null, 3);
                     handleMessage(tokensMsg);
                 }else if("history".equalsIgnoreCase(cmd)){
@@ -166,7 +168,21 @@ public class ServerThread extends Thread {
             }
         }
     }
+    private void handleRegister(OutputStream outputStream, String[] tokens) throws IOException {
+        if (tokens.length == 3) {
+            String login = tokens[1];
+            String password = tokens[2];
 
+            if (us.registerNewUser(login, password))  {
+                String msg = "ok register\n";
+                outputStream.write(msg.getBytes());
+            } else {
+                String msg = "error Register\n";
+                outputStream.write(msg.getBytes());
+                System.err.println("Register failed for " + login);
+            }
+        }
+    }
     private void send(String msg) throws IOException {
         if (login != null) {
             try {

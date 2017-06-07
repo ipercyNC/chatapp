@@ -53,6 +53,19 @@ public class Client {
         }
     }
 
+	public boolean register(String login, String password) throws IOException {
+	      String cmd = "register " + login + " " + password + "\n";
+	       servOut.write(cmd.getBytes());
+
+	        String response = bufferedIn.readLine();
+	        System.out.println("Response Line:" + response);
+
+	       if ("ok register".equalsIgnoreCase(response)) {
+	            return true;
+	        } else {
+	            return false;
+	        }
+	}
     public void logoff() throws IOException {
         String cmd = "logoff\n";
         servOut.write(cmd.getBytes());
@@ -77,8 +90,10 @@ public class Client {
                     String cmd = tokens[0];
                     if ("online".equalsIgnoreCase(cmd)) {
                         displayOnlineUsers(tokens);
+                        deliverLogin(tokens);
                     } else if ("offline".equalsIgnoreCase(cmd)) {
                         displayOfflineUsers(tokens);
+                        deliverLogoff(tokens);
                     } else if ("msg".equalsIgnoreCase(cmd)) {
                         String[] tokensMsg = StringUtils.split(line, null, 3);
                         deliverMessage(tokensMsg);
@@ -98,12 +113,33 @@ public class Client {
     private void deliverMessage(String[] tokensMsg) {
         String login = tokensMsg[1];
         String msgBody = tokensMsg[2];
+       if(login.equalsIgnoreCase("all")){
+    	   for(MessageListener listener : messageList) {
+               listener.onMessage(login, msgBody);
+           }
+       }
+       else{
+       for(MessageListener listener : messageList) {
+            listener.privMessage(login, msgBody);
+        }
+       }
+    }
+    private void deliverLogin(String[] tokensMsg) {
+        String login = "ONLINE";
+        String msgBody = tokensMsg[1];
         
         for(MessageListener listener : messageList) {
             listener.onMessage(login, msgBody);
         }
     }
-
+    private void deliverLogoff(String[] tokensMsg) {
+        String login = "OFFLINE";
+        String msgBody = tokensMsg[1];
+        
+        for(MessageListener listener : messageList) {
+            listener.onMessage(login, msgBody);
+        }
+    }
     private void displayOfflineUsers(String[] tokens) {
         String login = tokens[1];
         for(UserStatusListener listener : userList) {
@@ -130,6 +166,13 @@ public class Client {
             e.printStackTrace();
         }
         return false;
+    }
+    public void disconnect() {
+            try {
+				this.socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
     }
 
     public void addUserStatusListener(UserStatusListener listener) {
@@ -162,6 +205,7 @@ public class Client {
             return false;
         }
 	}
+	public String getUser(){return user;}
 
 	
 

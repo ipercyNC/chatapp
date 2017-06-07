@@ -14,12 +14,13 @@ public class HistoryFrame extends JPanel {
 		setLayout(new BorderLayout());
 		add(new JScrollPane(historyList),BorderLayout.CENTER);
 		populate(user);
+		
 	}
 	private void populate(String user){
 		String line  =null;
 		String path = user + ".txt";
 		try{
-			FileReader fileReader = new FileReader("ian.txt");
+			FileReader fileReader = new FileReader(path);
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
 			while((line = bufferedReader.readLine())!=null)
 				listModel.addElement(line);

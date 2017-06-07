@@ -3,7 +3,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 
 public class MessageFrame extends JPanel implements MessageListener {
@@ -31,6 +38,8 @@ public class MessageFrame extends JPanel implements MessageListener {
                 try {
                     String text = inputField.getText();
                     client.msg(login, text);
+                    String line = "You: "+text;
+                    updateHistory(line);
                     listModel.addElement("You: " + text);
                     inputField.setText("");
                 } catch (IOException e1) {
@@ -41,10 +50,41 @@ public class MessageFrame extends JPanel implements MessageListener {
     }
 
     @Override
-    public void onMessage(String fromLogin, String msgBody) {
+    public void privMessage(String fromLogin, String msgBody) {
         if (login.equalsIgnoreCase(fromLogin)) {
             String line = fromLogin + ": " + msgBody;
             listModel.addElement(line);
+            updateHistory(line);
         }
     }
+
+	@Override
+	public void onMessage(String fromLogin, String msgBody) {	
+	}
+	public void updateHistory(String line){
+		try {
+			
+			String path = client.getUser()+".txt";
+			Date today = Calendar.getInstance().getTime(); 
+			String name =client.getUser();
+        	File fp = new File(path);
+        	if(!fp.exists() && !fp.isDirectory()){
+        		try{
+        			fp.createNewFile();
+        			
+        		}catch(FileAlreadyExistsException ex){
+        		} catch (IOException e1) {
+        		}
+        	}
+			FileWriter fileWriter = new FileWriter(path,true);
+			BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+			bufferedWriter.write(line);
+			bufferedWriter.newLine();
+			bufferedWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
 }

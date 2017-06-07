@@ -5,7 +5,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 
 public class PrimaryFrame extends JPanel implements UserStatusListener, MessageListener {
@@ -19,25 +27,28 @@ public class PrimaryFrame extends JPanel implements UserStatusListener, MessageL
     private JTextField inputField = new JTextField();
     JButton logoutButton = new JButton("Logout");
     JButton historyButton = new JButton("Chat History");
-
+    DateFormat df;
     public PrimaryFrame(Client client) {
+    
+
         this.client = client;
         this.client.addUserStatusListener(this);
         client.addMessageListener(this);
         userListModel = new DefaultListModel<>();
         userListUI = new JList<>(userListModel);
         setLayout(new BorderLayout());
+        JPanel subPanel = new JPanel();
         add(new JScrollPane(userListUI), BorderLayout.EAST);
-        add(new JScrollPane(messageList),BorderLayout.WEST);
+        add(new JScrollPane(messageList),BorderLayout.CENTER);
         add(inputField,BorderLayout.SOUTH);
-        add(logoutButton,BorderLayout.NORTH);
-        add(historyButton,BorderLayout.CENTER);
+        subPanel.add(logoutButton);
+        subPanel.add(historyButton);
+        add(subPanel,BorderLayout.WEST);
         logoutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 doLogout();
                 setVisible(false);
-                
             }
         });
         historyButton.addActionListener(new ActionListener() {
@@ -47,19 +58,13 @@ public class PrimaryFrame extends JPanel implements UserStatusListener, MessageL
                 	String name =null;
                 	//boolean result = client.getHistory(name);
 					if(true){
-						HistoryFrame historyFrame = new HistoryFrame(client,name);
+						HistoryFrame historyFrame = new HistoryFrame(client,client.getUser());
 						JFrame f = new JFrame("History");
 	                    f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	                    f.setSize(500, 500);
 	                    f.getContentPane().add(historyFrame, BorderLayout.CENTER);
 	                    f.setVisible(true);
-					}//else{
-						 
-					//}
-							
-				//} //catch (IOException e1) {
-					//e1.printStackTrace();
-				//}
+					}
                 
             }
         });
@@ -95,6 +100,13 @@ public class PrimaryFrame extends JPanel implements UserStatusListener, MessageL
     }
     private void doLogout() {
         try {
+        	updateHistory();
+        	String line = "ONLINE " + client.getUser() + "\n";
+        	try {
+    			client.broadcastEvent(line);
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}
           client.logoff();
         } catch (IOException e) {
             e.printStackTrace();
@@ -103,7 +115,7 @@ public class PrimaryFrame extends JPanel implements UserStatusListener, MessageL
 
 	@Override
     public void online(String login) {
-    	String line = "ONLINE: " + login + "\n";
+    	String line = "ONLINE " + login + "\n";
     	try {
 			client.broadcastEvent(line);
 		} catch (IOException e) {
@@ -114,6 +126,12 @@ public class PrimaryFrame extends JPanel implements UserStatusListener, MessageL
 
     @Override
     public void offline(String login) {
+    	String line = "OFFLINE " + login + "\n";
+    	try {
+			client.broadcastEvent(line);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
         userListModel.removeElement(login);
     }
 
@@ -125,4 +143,44 @@ public class PrimaryFrame extends JPanel implements UserStatusListener, MessageL
          
        
     }
+	public void updateHistory(){
+		df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		try {
+			
+			String path = client.getUser()+".txt";
+			Date today = Calendar.getInstance().getTime(); 
+			String reportDate = df.format(today);
+			String name =client.getUser();
+        	File fp = new File(path);
+        	if(!fp.exists() && !fp.isDirectory()){
+        		try{
+        			fp.createNewFile();
+        			
+        		}catch(FileAlreadyExistsException ex){
+        		} catch (IOException e1) {
+        		}
+        	}
+			FileWriter fileWriter = new FileWriter(path,true);
+			BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+			bufferedWriter.write(reportDate);
+			bufferedWriter.newLine();
+			bufferedWriter.write("group chat");
+			bufferedWriter.newLine();
+			for(int i=0;i<listModel.size();i++){
+				bufferedWriter.write(listModel.get(i).toString());
+				bufferedWriter.newLine();
+			}
+			bufferedWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
+	@Override
+	public void privMessage(String fromLogin, String msgBody) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -97,4 +97,14 @@ public class UserStore {
 		}
 		
 	}
+	public boolean registerNewUser(String login, String password) {
+		
+		for(int i=0;i<users.size();i++){
+			if(users.get(i).equalsIgnoreCase(login)){
+				if(pass.get(i).equalsIgnoreCase(password))
+					return false;
+			}
+		}
+		return registerUser(login, password);
+	}
 }
