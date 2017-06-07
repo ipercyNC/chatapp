@@ -44,11 +44,16 @@ public class PrimaryFrame extends JPanel implements UserStatusListener, MessageL
         subPanel.add(logoutButton);
         subPanel.add(historyButton);
         add(subPanel,BorderLayout.WEST);
+       
         logoutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 doLogout();
                 setVisible(false);
+                JComponent comp =(JComponent) e.getSource();
+                Window win = SwingUtilities.getWindowAncestor(comp);
+                win.dispose();
+                
             }
         });
         historyButton.addActionListener(new ActionListener() {

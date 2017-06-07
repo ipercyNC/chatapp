@@ -31,6 +31,7 @@ public class MessageFrame extends JPanel implements MessageListener {
         setLayout(new BorderLayout());
         add(new JScrollPane(messageList), BorderLayout.CENTER);
         add(inputField, BorderLayout.SOUTH);
+        updateHistory("Private Chat: " + login);
 
         inputField.addActionListener(new ActionListener() {
             @Override

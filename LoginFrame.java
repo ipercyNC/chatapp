@@ -59,14 +59,20 @@ public class LoginFrame extends JFrame {
     }
 
     private void doLogin() {
-        String login = loginBox.getText();
-        String password = passwordBox.getText();
-
+    	String login = null;
+    	String password=null;
+    	if(loginBox.getText().isEmpty() || loginBox.getText().isEmpty()){
+    		login=password=null;
+    	}else{
+    	login = loginBox.getText();
+         password = passwordBox.getText();
+    	}
         try {
+        	if(login!=null && password!=null){
             if (client.login(login, password)) {
                 // bring up the user list window
                 PrimaryFrame primaryFrame = new PrimaryFrame(client);
-                JFrame frame = new JFrame("User List");
+                JFrame frame = new JFrame("User: "+ login);
                 frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
                 frame.setSize(1200, 1800);
 
@@ -77,16 +83,25 @@ public class LoginFrame extends JFrame {
             } else {
                 // show error message
                 JOptionPane.showMessageDialog(this, "Invalid login/password.");
+            }}else{
+            	JOptionPane.showMessageDialog(this,  "Please enter a valid username and password");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    private void doRegister() {
-        String login = loginBox.getText();
-        String password = passwordBox.getText();
 
+    private void doRegister() {
+    	String login = null;
+    	String password=null;
+    	if(loginBox.getText().isEmpty() || loginBox.getText().isEmpty()){
+    		login=password=null;
+    	}else{
+    	login = loginBox.getText();
+         password = passwordBox.getText();
+    	}
         try {
+        	if(login!=null && password!=null){
         	boolean result = client.register(login, password);
             if (result) {
             	
@@ -95,11 +110,14 @@ public class LoginFrame extends JFrame {
                  registerButton.setVisible(false);
             } else {
                 JOptionPane.showMessageDialog(this, "Unable to register user. Try again.");
+            } } else{
+            	JOptionPane.showMessageDialog(this, "Please enter a valid username and password");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     public static void main(String[] args) {
         LoginFrame loginWin = new LoginFrame();
         loginWin.setVisible(true);
