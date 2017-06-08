@@ -1,3 +1,12 @@
+/*
+ * HistoryFrame Class for Client Side
+ * Ian Percy
+ * 6/7/2017
+ * 
+ * Handles displaying the user's chat history (if it exists the frame will not be empty)
+ * Called from Primary Frame
+ * 
+ */
 import java.awt.BorderLayout;
 import java.io.BufferedReader;
 import java.io.FileReader;

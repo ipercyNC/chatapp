@@ -1,4 +1,11 @@
-
+/*
+ * LoginFrame Class for Client Side
+ * Ian Percy
+ * 6/7/2017
+ * 
+ * Start the client from this program. Handles login/register
+ * 
+ */
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

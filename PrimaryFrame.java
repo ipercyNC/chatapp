@@ -1,4 +1,10 @@
-
+/*
+ * PrimaryFrame Class for Client Side
+ * Ian Percy
+ * 6/7/2017
+ * 
+ * Main frame after login with client. Displays the chat, user list, ability to view chat history and logout.
+ */
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

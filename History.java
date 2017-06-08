@@ -1,3 +1,11 @@
+/*
+ * History Class
+ * Ian Percy
+ * 6/7/2017
+ * 
+ * Not used currently. Keeping for future modifications
+ * 
+ */
 import java.io.File;
 
 public class History {

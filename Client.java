@@ -1,4 +1,10 @@
-
+/*
+ * Client Class for Client Side
+ * Ian Percy
+ * 6/7/2017
+ * 
+ * Handles the communication between user GUI and the server
+ */
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -29,7 +35,7 @@ public class Client {
         servOut.write(cmd.getBytes());
     }
     public void broadcast(String msg) throws IOException{
-    	String cmd = "msg all " + msg+"\n";
+    	String cmd = "all " + user + " " +msg+"\n";
     	servOut.write(cmd.getBytes());
     }
     public void broadcastEvent(String line) throws IOException {
@@ -98,6 +104,10 @@ public class Client {
                         String[] tokensMsg = StringUtils.split(line, null, 3);
                         deliverMessage(tokensMsg);
                     }
+                    else if("all".equalsIgnoreCase(cmd)){
+                    	String [] tokensMsg = StringUtils.split(line,null,3);
+                    	deliverBroadcast(tokensMsg);
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -131,6 +141,13 @@ public class Client {
         for(MessageListener listener : messageList) {
             listener.onMessage(login, msgBody);
         }
+    }
+    private void deliverBroadcast(String[] tokensMsg){
+    	String login = tokensMsg[1];
+    	String msgBody = tokensMsg[2];
+    	for(MessageListener listener : messageList){
+    		listener.onMessage(login, msgBody);
+    	}
     }
     private void deliverLogoff(String[] tokensMsg) {
         String login = "OFFLINE";

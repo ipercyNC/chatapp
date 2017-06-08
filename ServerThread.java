@@ -1,5 +1,13 @@
 
-//import ch.qos.logback.classic.Logger;
+/*
+ * ServerThread Class for the server side
+ * Ian Percy
+ * 6/7/2017
+ * 
+ * Server thread object class. Each client will communicate with one of these server threads. 
+ * Delivers messages and handles input/output buffered stream. 
+ * 
+ */
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
@@ -57,7 +65,11 @@ public class ServerThread extends Thread {
                     handleMessage(tokensMsg);
                 }else if("history".equalsIgnoreCase(cmd)){
                 	handleHistory(outputStream);
+                }else if("all".equalsIgnoreCase(cmd)){
+                	String[] tokensMsg = StringUtils.split(line,null,3);
+                	handleMessage(tokensMsg);
                 }else{
+                	
                     String msg = "unknown " + cmd + "\n";
                     outputStream.write(msg.getBytes());
                 }
@@ -83,16 +95,17 @@ public class ServerThread extends Thread {
 	}
 
 	private void handleMessage(String[] tokens) throws IOException {
+		String cat = tokens[0];
         String sendTo = tokens[1];
         String body = tokens[2];
 
 
         List<ServerThread> workerList = server.getWorkerList();
        
-        if(sendTo.equalsIgnoreCase("all")){
+        if(cat.equalsIgnoreCase("all")){
             for(ServerThread worker : workerList) {
             	if(!login.equals(worker.getLogin())){
-            	String outMsg = "msg " + login + " " + body + "\n";
+            	String outMsg = "all " + login + " " + body + "\n";
             	worker.send(outMsg);
             	}
             }

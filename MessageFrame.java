@@ -1,3 +1,11 @@
+/*
+ * MessageFrame Class for Client Side
+ * Ian Percy
+ * 6/7/2017
+ * 
+ * Handles the private message frame between two clients
+ * 
+ */
 
 import javax.swing.*;
 import java.awt.*;

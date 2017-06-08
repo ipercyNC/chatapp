@@ -1,4 +1,11 @@
-
+/*
+ * Server Class for the server side
+ * Ian Percy
+ * 6/7/2017
+ * 
+ * Main server object, created from ServerStart. Will handle creating the server threads and continually looping
+ * 
+ */
 
 import java.io.IOException;
 import java.net.ServerSocket;

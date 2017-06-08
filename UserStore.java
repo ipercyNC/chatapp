@@ -1,3 +1,11 @@
+/*
+ * UserStore Class for the server side
+ * Ian Percy
+ * 6/7/2017
+ * 
+ * Loads the user informatoin from two text files. Verifies users, registers, and rewrites to file after done. 
+ * 
+ */
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
